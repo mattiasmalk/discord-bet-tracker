@@ -8,7 +8,7 @@ import java.util.List;
 
 public class HsqlServer {
 
-    static void main(String[] args) {
+    public static void main(String[] args) {
         var server = new Server();
         server.setDatabasePath(0, "mem:testDB;sql.syntax_pgs=true");
         server.setDatabaseName(0, "testDB");

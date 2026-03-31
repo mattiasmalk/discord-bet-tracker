@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
@@ -14,6 +15,17 @@ public class Bet {
 	@Id
 	@GeneratedValue
 	private Long id;
+
+	private String description;
+
+	@Column(name = "stake", scale = 3)
+	private BigDecimal stake;
+
+	@Column(name = "odds", scale = 3)
+	private BigDecimal odds;
+
+	@Enumerated(EnumType.STRING)
+	private BetStatus status;
 
 	@ManyToOne
 	@JoinColumns({
@@ -26,5 +38,4 @@ public class Bet {
 	@Column(name = "resolved_at")
 	private Instant resolvedAt;
 
-	// TODO @Mattias - add required fields for bets
 }

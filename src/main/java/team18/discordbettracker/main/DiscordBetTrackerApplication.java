@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication( scanBasePackages = "team18.discordbettracker")
 public class DiscordBetTrackerApplication {
 
-	static void main(String[] args) {
+	public static void main(String[] args) {
 		SpringApplication.run(DiscordBetTrackerApplication.class, args);
 	}
 
