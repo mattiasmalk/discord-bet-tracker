@@ -1,11 +1,10 @@
 package team18.discordbettracker.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import team18.discordbettracker.model.Bet;
 import team18.discordbettracker.model.UserId;
 
 import java.util.List;
 
-public interface BetRepository extends JpaRepository<Bet, Long>, BetRepositoryCustom {
+public interface BetRepositoryCustom {
     List<Bet> findLatestByUserId(UserId userId);
 }
