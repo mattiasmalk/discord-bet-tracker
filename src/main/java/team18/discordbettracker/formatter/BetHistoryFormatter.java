@@ -1,20 +1,24 @@
 package team18.discordbettracker.formatter;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import team18.discordbettracker.model.BetDto;
 
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
 @Component
+@NullMarked
 public class BetHistoryFormatter {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("dd.MM.yy HH:mm")
                     .withZone(ZoneId.of("Europe/Tallinn"));
 
-    private String formatInstant(java.time.Instant instant) {
+    private String formatInstant(@Nullable Instant instant) {
         return instant == null ? "-" : DATE_TIME_FORMATTER.format(instant);
     }
 

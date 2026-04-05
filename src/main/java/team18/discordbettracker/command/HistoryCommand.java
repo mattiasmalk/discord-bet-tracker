@@ -2,13 +2,13 @@ package team18.discordbettracker.command;
 
 import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 import team18.discordbettracker.formatter.BetHistoryFormatter;
 import team18.discordbettracker.model.UserId;
 import team18.discordbettracker.service.BetService;
+
+import static team18.discordbettracker.util.BotHelpers.getIdFromGuild;
 
 @AllArgsConstructor
 @NullMarked
@@ -28,14 +28,9 @@ public class HistoryCommand implements SlashCommand {
 	}
 
 	@Override
-	public CommandData getCommandData() {
-		return Commands.slash(getName(), getDescription());
-	}
-
-	@Override
 	public void execute(SlashCommandInteractionEvent event) {
 		var user = event.getUser();
-		var guildId = event.getGuild() != null ? event.getGuild().getIdLong() : 0L;
+		var guildId = getIdFromGuild(event.getGuild());
 		var userId = new UserId(user.getIdLong(), guildId);
 
 		var bets = betService.getHistory(userId);

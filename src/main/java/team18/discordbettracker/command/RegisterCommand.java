@@ -2,8 +2,6 @@ package team18.discordbettracker.command;
 
 import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 import team18.discordbettracker.service.UserService;
@@ -22,11 +20,6 @@ public class RegisterCommand implements SlashCommand {
 	@Override
 	public String getDescription() {
 		return "Register the user to the database";
-	}
-
-	@Override
-	public CommandData getCommandData() {
-		return Commands.slash(getName(), getDescription());
 	}
 
 	@Override
