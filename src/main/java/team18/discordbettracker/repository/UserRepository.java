@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import team18.discordbettracker.model.User;
 import team18.discordbettracker.model.UserId;
 
-public interface UserRepository extends JpaRepository<User, UserId> {
+public interface UserRepository extends JpaRepository<User, UserId>, UserRepositoryCustom {
 }
