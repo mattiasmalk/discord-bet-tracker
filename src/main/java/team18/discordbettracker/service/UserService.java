@@ -8,6 +8,7 @@ import team18.discordbettracker.model.UserId;
 import team18.discordbettracker.repository.UserRepository;
 
 import java.time.Instant;
+import java.util.Optional;
 
 @Service
 @NullMarked
@@ -25,5 +26,17 @@ public class UserService {
 				.build();
 
 		userRepository.save(user);
+	}
+
+	public Optional<User> findByUserId(UserId userId) {
+		return userRepository.findById(userId);
+	}
+
+	public User createUser(UserId userId, String name) {
+		return userRepository.save(User.builder()
+				.userId(userId)
+				.name(name)
+				.createdAt(Instant.now())
+				.build());
 	}
 }

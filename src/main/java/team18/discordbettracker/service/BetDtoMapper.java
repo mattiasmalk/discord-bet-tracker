@@ -1,14 +1,16 @@
 package team18.discordbettracker.service;
 
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 import team18.discordbettracker.model.Bet;
 import team18.discordbettracker.model.BetDto;
-import team18.discordbettracker.model.BetStatus;
 
-import java.math.BigDecimal;
 import java.util.List;
 
+import static team18.discordbettracker.util.BotHelpers.calculateProfit;
+
 @Component
+@NullMarked
 public class BetDtoMapper {
 
     public BetDto toDto(Bet bet) {
@@ -28,22 +30,5 @@ public class BetDtoMapper {
         return bets.stream()
                 .map(this::toDto)
                 .toList();
-    }
-
-    private BigDecimal calculateProfit(Bet bet) {
-        var profit = BigDecimal.ZERO;
-
-        if (bet.getStake() == null || bet.getOdds() == null || bet.getStatus() == null) {
-            return profit;
-        }
-
-        var betStatus = bet.getStatus();
-        if (betStatus == BetStatus.WON) {
-            profit = bet.getStake().multiply(bet.getOdds().subtract(BigDecimal.ONE));
-        } else if (betStatus == BetStatus.LOST) {
-            profit = bet.getStake().negate();
-        }
-
-        return profit;
     }
 }

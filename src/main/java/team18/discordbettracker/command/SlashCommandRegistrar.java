@@ -21,8 +21,10 @@ public class SlashCommandRegistrar {
 		var commandData = commands.stream().map(SlashCommand::getCommandData).toList();
 //		jda.updateCommands().addCommands(commandData).queue();
 
+		// this adding by guild is just for development/testing purposes
+		// the other commented-out way takes up to an hour to add the command
+		// this way is faster to get the command to a specific server
 		var guildId = "1485352818184552459";
-
 		jda.getGuildById(guildId).updateCommands().addCommands(commandData).queue();
 
 		System.out.println("Slash commands registered: " + commandData.size());
