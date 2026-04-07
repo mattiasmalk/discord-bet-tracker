@@ -38,6 +38,7 @@ import static org.mockito.Mockito.*;
 @Import({
         AddBetCommand.class,
         HistoryCommand.class,
+        SettleBetCommand.class,
         BetService.class,
         BetDtoMapper.class,
         UserService.class,
@@ -50,6 +51,9 @@ class CommandIntegrationTest {
 
     @Autowired
     private HistoryCommand historyCommand;
+
+    @Autowired
+    private SettleBetCommand settleBetCommand;
 
     @Autowired
     private BetRepository betRepository;
@@ -167,6 +171,52 @@ class CommandIntegrationTest {
         var expectedMessage = betHistoryFormatter.format(betService.getHistory(userId));
         verify(event).reply(eq(expectedMessage));
         verify(replyAction).queue();
+    }
+
+    @Test
+    void settleBetCommand_setsBetStatusAndResolvedAt() {
+        var userId = new UserId(333L, 444L);
+        var user = userRepository.save(team18.discordbettracker.model.User.builder()
+                .userId(userId)
+                .name("charlie")
+                .createdAt(Instant.parse("2026-04-05T10:00:00Z"))
+                .build());
+
+        var bet = betRepository.save(Bet.builder()
+                .user(user)
+                .description("Test bet")
+                .stake(new BigDecimal("10.00"))
+                .odds(new BigDecimal("1.50"))
+                .status(BetStatus.OPEN)
+                .createdAt(Instant.parse("2026-04-05T10:15:00Z"))
+                .build());
+
+        var event = mock(SlashCommandInteractionEvent.class);
+        var discordUser = mock(User.class);
+        var guild = mock(Guild.class);
+        var betIdOption = mock(OptionMapping.class);
+        var resultOption = mock(OptionMapping.class);
+        var replyAction = mock(ReplyCallbackAction.class);
+
+        when(event.getUser()).thenReturn(discordUser);
+        when(event.getGuild()).thenReturn(guild);
+        when(discordUser.getIdLong()).thenReturn(333L);
+        when(guild.getIdLong()).thenReturn(444L);
+
+        when(event.getOption(SettleBetCommand.SETTLE_BET_OPTION_BET_ID)).thenReturn(betIdOption);
+        when(event.getOption(SettleBetCommand.SETTLE_BET_OPTION_RESULT)).thenReturn(resultOption);
+        when(betIdOption.getAsLong()).thenReturn(bet.getId());
+        when(resultOption.getAsString()).thenReturn("WON");
+        when(event.reply(anyString())).thenReturn(replyAction);
+
+        settleBetCommand.execute(event);
+
+        verify(event).reply(anyString());
+        verify(replyAction).queue();
+
+        var savedBet = betRepository.findById(bet.getId()).orElseThrow();
+        assertThat(savedBet.getStatus()).isEqualTo(BetStatus.WON);
+        assertThat(savedBet.getResolvedAt()).isNotNull();
     }
 
     @SpringBootConfiguration

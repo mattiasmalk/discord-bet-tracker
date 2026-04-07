@@ -9,6 +9,7 @@ import team18.discordbettracker.repository.BetRepository;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @NullMarked
@@ -26,6 +27,20 @@ public class BetService {
                 .status(BetStatus.OPEN)
                 .createdAt(Instant.now())
                 .build();
+
+        return betDtoMapper.toDto(betRepository.save(bet));
+    }
+
+    public BetDto settleBet(UserId userId, Long betId, BetStatus result) {
+        var bet = betRepository.findByIdAndUserUserId(betId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("Bet not found or does not belong to you."));
+
+        if (bet.getStatus() != BetStatus.OPEN) {
+            throw new IllegalStateException("Bet is already settled.");
+        }
+
+        bet.setStatus(result);
+        bet.setResolvedAt(Instant.now());
 
         return betDtoMapper.toDto(betRepository.save(bet));
     }
