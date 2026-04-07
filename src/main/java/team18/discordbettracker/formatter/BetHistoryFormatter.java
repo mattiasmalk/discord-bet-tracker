@@ -27,12 +27,13 @@ public class BetHistoryFormatter {
         if (bets.isEmpty()) {return "No bets found.";}
 
         StringBuilder message = new StringBuilder("```\n");
-        message.append(String.format("%-15s %-15s %-8s %-8s %-20s %-8s %-8s\n",
-                "CREATED", "RESOLVED", "STAKE", "ODDS", "DESCRIPTION", "STATUS", "PROFIT"));
-        message.append("-".repeat(90)).append("\n");
+        message.append(String.format("%-6s %-15s %-15s %-8s %-8s %-20s %-8s %-8s\n",
+                "ID", "CREATED", "RESOLVED", "STAKE", "ODDS", "DESCRIPTION", "STATUS", "PROFIT"));
+        message.append("-".repeat(100)).append("\n");
 
         for (var bet : bets) {
-            message.append(String.format("%-15s %-15s %-8s %-8s %-20s %-8s %-8s\n",
+            message.append(String.format("%-6s %-15s %-15s %-8s %-8s %-20s %-8s %-8s\n",
+                    bet.id(),
                     formatInstant(bet.createdAt()),
                     formatInstant(bet.resolvedAt()),
                     bet.stake(),
