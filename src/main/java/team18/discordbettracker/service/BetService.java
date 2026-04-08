@@ -9,7 +9,6 @@ import team18.discordbettracker.repository.BetRepository;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @NullMarked
@@ -52,8 +51,8 @@ public class BetService {
         return betDtos;
     }
 
-    public List<BetDto> getOpenBets(Long serverId) {
-        var bets = betRepository.findByUserUserIdServerIdAndStatus(serverId, BetStatus.OPEN);
+    public List<BetDto> getOpenBets(UserId userId) {
+        var bets = betRepository.findByUserUserIdAndStatus(userId, BetStatus.OPEN);
         return betDtoMapper.toDtoList(bets);
     }
 }

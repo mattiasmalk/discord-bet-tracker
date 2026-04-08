@@ -256,13 +256,15 @@ class CommandIntegrationTest {
         var guild = mock(Guild.class);
         var replyAction = mock(ReplyCallbackAction.class);
 
+        when(event.getUser()).thenReturn(discordUser);
+        when(discordUser.getIdLong()).thenReturn(555L);
         when(event.getGuild()).thenReturn(guild);
         when(guild.getIdLong()).thenReturn(777L);
         when(event.reply(anyString())).thenReturn(replyAction);
 
         openBetsCommand.execute(event);
 
-        var expectedMessage = betHistoryFormatter.format(betService.getOpenBets(777L));
+        var expectedMessage = betHistoryFormatter.format(betService.getOpenBets(new UserId(555L, 777L)));
         verify(event).reply(eq(expectedMessage));
         verify(replyAction).queue();
     }

@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 import team18.discordbettracker.formatter.BetHistoryFormatter;
+import team18.discordbettracker.model.UserId;
 import team18.discordbettracker.service.BetService;
 
 import static team18.discordbettracker.util.BotHelpers.getIdFromGuild;
@@ -23,13 +24,15 @@ public class OpenBetsCommand implements SlashCommand {
 
     @Override
     public String getDescription() {
-        return "Show all open bets in this server.";
+        return "Show your open bets in this server.";
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
+        var discordUser = event.getUser();
         var guildId = getIdFromGuild(event.getGuild());
-        var bets = betService.getOpenBets(guildId);
+        var userId = new UserId(discordUser.getIdLong(), guildId);
+        var bets = betService.getOpenBets(userId);
         var message = betHistoryFormatter.format(bets);
 
         event.reply(message).queue();

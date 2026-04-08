@@ -12,4 +12,5 @@ public interface BetRepository extends JpaRepository<Bet, Long>, BetRepositoryCu
     List<Bet> findLatestByUserId(UserId userId);
     Optional<Bet> findByIdAndUserUserId(Long id, UserId userId);
     List<Bet> findByUserUserIdServerIdAndStatus(Long serverId, BetStatus status);
+    List<Bet> findByUserUserIdAndStatus(UserId userId, BetStatus status);
 }
