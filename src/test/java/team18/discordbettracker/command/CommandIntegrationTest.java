@@ -42,7 +42,8 @@ import static org.mockito.Mockito.*;
         BetService.class,
         BetDtoMapper.class,
         UserService.class,
-        BetHistoryFormatter.class
+        BetHistoryFormatter.class,
+        OpenBetsCommand.class
 })
 class CommandIntegrationTest {
 
@@ -54,6 +55,9 @@ class CommandIntegrationTest {
 
     @Autowired
     private SettleBetCommand settleBetCommand;
+
+    @Autowired
+    private OpenBetsCommand openBetsCommand;
 
     @Autowired
     private BetRepository betRepository;
@@ -217,6 +221,50 @@ class CommandIntegrationTest {
         var savedBet = betRepository.findById(bet.getId()).orElseThrow();
         assertThat(savedBet.getStatus()).isEqualTo(BetStatus.WON);
         assertThat(savedBet.getResolvedAt()).isNotNull();
+    }
+
+    @Test
+    void openBetsCommand_repliesWithFormattedOpenBetsForServer() {
+        var userId = new UserId(555L, 777L);
+        var user = userRepository.save(team18.discordbettracker.model.User.builder()
+                .userId(userId)
+                .name("diane")
+                .createdAt(Instant.parse("2026-04-05T10:00:00Z"))
+                .build());
+
+        betRepository.save(Bet.builder()
+                .user(user)
+                .description("Open bet one")
+                .stake(new BigDecimal("5.00"))
+                .odds(new BigDecimal("1.80"))
+                .status(BetStatus.OPEN)
+                .createdAt(Instant.parse("2026-04-05T10:15:00Z"))
+                .build());
+
+        betRepository.save(Bet.builder()
+                .user(user)
+                .description("Settled bet")
+                .stake(new BigDecimal("10.00"))
+                .odds(new BigDecimal("2.00"))
+                .status(BetStatus.WON)
+                .createdAt(Instant.parse("2026-04-05T11:15:00Z"))
+                .resolvedAt(Instant.parse("2026-04-05T12:00:00Z"))
+                .build());
+
+        var event = mock(SlashCommandInteractionEvent.class);
+        var discordUser = mock(User.class);
+        var guild = mock(Guild.class);
+        var replyAction = mock(ReplyCallbackAction.class);
+
+        when(event.getGuild()).thenReturn(guild);
+        when(guild.getIdLong()).thenReturn(777L);
+        when(event.reply(anyString())).thenReturn(replyAction);
+
+        openBetsCommand.execute(event);
+
+        var expectedMessage = betHistoryFormatter.format(betService.getOpenBets(777L));
+        verify(event).reply(eq(expectedMessage));
+        verify(replyAction).queue();
     }
 
     @SpringBootConfiguration

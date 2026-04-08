@@ -52,4 +52,8 @@ public class BetService {
         return betDtos;
     }
 
+    public List<BetDto> getOpenBets(Long serverId) {
+        var bets = betRepository.findByUserUserIdServerIdAndStatus(serverId, BetStatus.OPEN);
+        return betDtoMapper.toDtoList(bets);
+    }
 }
