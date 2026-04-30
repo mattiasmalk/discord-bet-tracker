@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @NullMarked
@@ -54,6 +53,7 @@ public class BetService {
         return betDtos;
     }
 
+
     public BettingSummaryDto getBettingSummary(UserId userId) {
         var bets = betRepository.findAllByUserId(userId);
 
@@ -89,5 +89,11 @@ public class BetService {
                 .multiply(BigDecimal.valueOf(100));
 
         return new BettingSummaryDto(openBetsCount, totalBets, winRate, totalProfit, roi);
+}
+
+    public List<BetDto> getOpenBets(UserId userId) {
+        var bets = betRepository.findByUserUserIdAndStatus(userId, BetStatus.OPEN);
+        return betDtoMapper.toDtoList(bets);
     }
+    
 }
