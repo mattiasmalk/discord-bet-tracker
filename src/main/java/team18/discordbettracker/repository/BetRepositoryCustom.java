@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface BetRepositoryCustom {
     List<Bet> findLatestByUserId(UserId userId);
+    List<Bet> findAllByUserId(UserId userId);
 }

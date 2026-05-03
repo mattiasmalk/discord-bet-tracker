@@ -36,4 +36,18 @@ public class BetRepositoryImpl implements BetRepositoryCustom {
         query.setMaxResults(HISTORY_LIMIT);
         return query.getResultList();
     }
+
+    @Override
+    public List<Bet> findAllByUserId(UserId userId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Bet> cq = cb.createQuery(Bet.class);
+        Root<Bet> bet = cq.from(Bet.class);
+
+        cq.select(bet)
+                .where(cb.equal(bet.get("user").get("userId"), userId))
+                .orderBy(cb.desc(bet.get("createdAt")));
+
+        TypedQuery<Bet> query = entityManager.createQuery(cq);
+        return query.getResultList();
+    }
 }
